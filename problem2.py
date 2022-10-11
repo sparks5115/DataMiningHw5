@@ -1,5 +1,7 @@
 import torch as th
 from model import LogisticRegression
+from problem1 import backward, update_b, update_w
+
 # Note: please don't import any new package. You should solve this problem using only the package(s) above.
 #-------------------------------------------------------------------------
 
@@ -33,7 +35,7 @@ from model import LogisticRegression
 def compute_z(x, m):
     #########################################
     ## INSERT YOUR CODE HERE (5 points)
-    
+    z = m.forward(x)
     #########################################
     return z
     #------ (5 points / 20 total points) -----------
@@ -67,7 +69,7 @@ def compute_z(x, m):
 def compute_L(z, y):
     #########################################
     ## INSERT YOUR CODE HERE (5 points)
-    
+    L = th.nn.functional.binary_cross_entropy(z, y)
     #########################################
     return L
     #------ (5 points / 20 total points) -----------
@@ -98,7 +100,8 @@ def compute_L(z, y):
 def update_parameters(optimizer):
     #########################################
     ## INSERT YOUR CODE HERE (5 points)
-    
+    optimizer.step()
+    optimizer.zero_grad()
     #########################################
     #------ (5 points / 20 total points) -----------
     '''  
@@ -139,7 +142,7 @@ def train(data_loader, p, alpha=0.001, n_epoch=100):
             y=mini_batch[1] # the labels of the samples in a mini-batch
             #########################################
             ## INSERT YOUR CODE HERE (5 points)
-    
+
             #########################################
     return m
     #------ (5 points / 20 total points) -----------

@@ -24,7 +24,7 @@ def Terms_and_Conditions():
     '''
     #*******************************************
     # CHANGE HERE: if you have read and agree with the term above, change "False" to "True".
-    Read_and_Agree = False
+    Read_and_Agree = True
     #*******************************************
     return Read_and_Agree
 
@@ -44,7 +44,10 @@ def Terms_and_Conditions():
 def compute_z(x, w, b):
     #########################################
     ## INSERT YOUR CODE HERE (5 points)
-    
+    z = 0
+    for i in range(len(x)):
+        z += x[i]*w[i]
+    z += b
     #########################################
     return z
     #------ (5 points / 60 total points) -----------
@@ -72,7 +75,7 @@ def compute_z(x, w, b):
 def compute_dz_db():
     #########################################
     ## INSERT YOUR CODE HERE (5 points)
-    
+    dz_db = 1
     #########################################
     return dz_db
     #------ (5 points / 60 total points) -----------
@@ -102,7 +105,7 @@ def compute_dz_db():
 def compute_dz_dw(x):
     #########################################
     ## INSERT YOUR CODE HERE (5 points)
-    
+    dz_dw = x
     #########################################
     return dz_dw
     #------ (5 points / 60 total points) -----------
@@ -136,7 +139,10 @@ def compute_dz_dw(x):
 def compute_L(z, y):
     #########################################
     ## INSERT YOUR CODE HERE (5 points)
-    
+    if z >= 1000:
+        L = z*(1-y)
+    else:
+        L=np.log(1+np.exp(z))-y*z
     #########################################
     return L
     #------ (5 points / 60 total points) -----------
@@ -167,7 +173,13 @@ def compute_L(z, y):
 def compute_dL_dz(z, y):
     #########################################
     ## INSERT YOUR CODE HERE (5 points)
-    
+    if z<-200:
+        dL_dz = -y
+    elif z>200:
+        dL_dz = 1-y
+
+    else:
+        dL_dz = (1/(1+np.exp(-z)))-y
     #########################################
     return dL_dz
     #------ (5 points / 60 total points) -----------
@@ -198,7 +210,7 @@ def compute_dL_dz(z, y):
 def compute_dL_db(dL_dz, dz_db):
     #########################################
     ## INSERT YOUR CODE HERE (5 points)
-    
+    dL_db = dL_dz*dz_db
     #########################################
     return dL_db
     #------ (5 points / 60 total points) -----------
@@ -229,7 +241,7 @@ def compute_dL_db(dL_dz, dz_db):
 def compute_dL_dw(dL_dz, dz_dw):
     #########################################
     ## INSERT YOUR CODE HERE (5 points)
-    
+    dL_dw = dL_dz*dz_dw
     #########################################
     return dL_dw
     #------ (5 points / 60 total points) -----------
@@ -264,7 +276,11 @@ def compute_dL_dw(dL_dz, dz_dw):
 def backward(x, y, z):
     #########################################
     ## INSERT YOUR CODE HERE (5 points)
-    
+    dL_dz = compute_dL_dz(z,y)
+    dz_db = compute_dz_db()
+    dz_dw = compute_dz_dw(x)
+    dL_db = compute_dL_db(dL_dz, dz_db)
+    dL_dw = compute_dL_dw(dL_dz, dz_dw)
     #########################################
     return dL_dw, dL_db
     #------ (5 points / 60 total points) -----------
@@ -296,7 +312,7 @@ def backward(x, y, z):
 def update_b(b, dL_db, alpha=0.001):
     #########################################
     ## INSERT YOUR CODE HERE (5 points)
-    
+    b = b-alpha*dL_db
     #########################################
     return b
     #------ (5 points / 60 total points) -----------
@@ -328,7 +344,7 @@ def update_b(b, dL_db, alpha=0.001):
 def update_w(w, dL_dw, alpha=0.001):
     #########################################
     ## INSERT YOUR CODE HERE (5 points)
-    
+    w=w-alpha*dL_dw
     #########################################
     return w
     #------ (5 points / 60 total points) -----------
@@ -372,7 +388,10 @@ def train(X, Y, alpha=0.001, n_epoch=100):
             y=Y[i] # the label of the i-th random sample
             #########################################
             ## INSERT YOUR CODE HERE (5 points)
-    
+            z=compute_z(x,w,b)
+            dL_dw, dL_db = backward(x,y,z)
+            b = update_b(b, dL_db, alpha)
+            w = update_w(w, dL_dw, alpha)
             #########################################
     return w, b
     #------ (5 points / 60 total points) -----------
@@ -404,7 +423,13 @@ def train(X, Y, alpha=0.001, n_epoch=100):
 def predict(x, w, b):
     #########################################
     ## INSERT YOUR CODE HERE (5 points)
-    
+    z=compute_z(x,w,b)
+
+    if z>0:
+        y=1
+    else:
+        y=0
+
     #########################################
     return y
     #------ (5 points / 60 total points) -----------
